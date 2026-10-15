@@ -69,12 +69,7 @@ function evw_route( $wp ) {
 	$path    = trim( (string) $wp->request, '/' );
 	$aliases = evw_aliases( $live );
 	if ( isset( $aliases[ $path ] ) ) {
-		$to = home_url( '/' . ( '' === $aliases[ $path ] ? '' : $aliases[ $path ] . '/' ) );
-		if ( ! empty( $_SERVER['QUERY_STRING'] ) ) {
-			$to .= '?' . wp_unslash( $_SERVER['QUERY_STRING'] ); // keep utm_* and fbclid from ads
-		}
-		wp_safe_redirect( $to, 301, 'Evermonth Web' );
-		exit;
+		evw_redirect( '' === $aliases[ $path ] ? '' : $aliases[ $path ] . '/' );
 	}
 
 	$pages = evw_pages();
@@ -86,7 +81,29 @@ function evw_route( $wp ) {
 		return;
 	}
 
+	// http:// or www. -> the one https address. WordPress does this in redirect_canonical,
+	// but we answer before it runs, so we do it here.
+	$home = wp_parse_url( home_url() );
+	$host = isset( $_SERVER['HTTP_HOST'] ) ? strtolower( wp_unslash( $_SERVER['HTTP_HOST'] ) ) : '';
+	$want = strtolower( $home['host'] ) . ( isset( $home['port'] ) ? ':' . $home['port'] : '' );
+	$https = is_ssl()
+		|| ( isset( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) && 'https' === strtolower( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) )
+		|| ( isset( $_SERVER['HTTP_X_FORWARDED_SSL'] ) && 'on' === strtolower( $_SERVER['HTTP_X_FORWARDED_SSL'] ) );
+	if ( ( '' !== $host && $host !== $want ) || ( 'https' === $home['scheme'] && ! $https ) ) {
+		evw_redirect( '' === $path ? '' : $path . '/' );
+	}
+
 	evw_serve( $pages[ $path ], $live, 'HEAD' === $method );
+}
+
+/** 301 to a path on the home URL. Keeps the query string (utm_*, fbclid from ads). */
+function evw_redirect( $rel ) {
+	$to = home_url( '/' . $rel );
+	if ( ! empty( $_SERVER['QUERY_STRING'] ) ) {
+		$to .= '?' . wp_unslash( $_SERVER['QUERY_STRING'] );
+	}
+	wp_safe_redirect( $to, 301, 'Evermonth Web' );
+	exit;
 }
 
 /** Send one page of the new site and stop WordPress. */
