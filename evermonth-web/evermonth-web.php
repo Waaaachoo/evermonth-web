@@ -3,7 +3,7 @@
  * Plugin Name:       Evermonth Web
  * Plugin URI:        https://github.com/Waaaachoo/evermonth-web
  * Description:       Sirve el sitio nuevo de Campamento Evermonth (inicio y Halloween) dentro de WordPress. Se actualiza desde GitHub. Apagarlo devuelve el sitio anterior.
- * Version:           1.0.3
+ * Version:           1.0.4
  * Author:            Made by Wacho
  * Requires at least: 5.8
  * Requires PHP:      7.4
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'EVW_VERSION', '1.0.3' );
+define( 'EVW_VERSION', '1.0.4' );
 define( 'EVW_FILE', __FILE__ );
 define( 'EVW_DIR', plugin_dir_path( __FILE__ ) );
 define( 'EVW_BASENAME', plugin_basename( __FILE__ ) );
