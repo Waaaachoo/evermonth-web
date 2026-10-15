@@ -96,10 +96,12 @@ function evw_plugin_info( $result, $action, $args ) {
 	);
 }
 
-/** After an update, forget the cached release. */
+/** After an update: forget the cached release and clear the page cache, so visitors get the new HTML. */
 add_action(
 	'upgrader_process_complete',
 	function () {
 		delete_site_transient( EVW_RELEASE_CACHE );
+		do_action( 'litespeed_purge_all' );
+		wp_cache_flush();
 	}
 );

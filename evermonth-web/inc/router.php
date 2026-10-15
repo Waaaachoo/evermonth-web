@@ -13,6 +13,7 @@ function evw_pages() {
 	return array(
 		''          => 'index.html',
 		'halloween' => 'halloween.html',
+		'nosotros'  => 'nosotros.html',
 	);
 }
 
@@ -23,6 +24,7 @@ function evw_aliases( $live ) {
 		'halloween.html'   => 'halloween',
 		'halloween-m.html' => 'halloween',
 		'halloween-m'      => 'halloween',
+		'nosotros.html'    => 'nosotros',
 	);
 	// The client's old Halloween page. Only when the new site is live, so the preview never hides it.
 	if ( $live ) {
@@ -121,6 +123,11 @@ function evw_serve( $file, $live, $head_only ) {
 
 	status_header( 200 );
 	header( 'Content-Type: text/html; charset=utf-8' );
+	// Security headers. WordPress's own send_headers never runs here (we exit in parse_request).
+	header( 'X-Content-Type-Options: nosniff' );
+	header( 'X-Frame-Options: SAMEORIGIN' );
+	header( 'Referrer-Policy: strict-origin-when-cross-origin' );
+	header( 'Permissions-Policy: camera=(), microphone=(), geolocation=()' );
 	if ( $live ) {
 		header( 'Cache-Control: public, max-age=300' );
 	} else {
@@ -135,7 +142,7 @@ function evw_serve( $file, $live, $head_only ) {
 /**
  * Fix the links of the static page for this WordPress:
  * - assets (img/, css/, js/, video/, fuentes/) point to the plugin folder,
- * - page links point to the pretty URLs (/ and /halloween/),
+ * - page links point to the pretty URLs (/, /halloween/ and /nosotros/),
  * - the test-link URLs (canonical, og:, JSON-LD) point to this site,
  * - data-base on <html> tells the JS where the images are.
  */
@@ -157,11 +164,12 @@ function evw_rewrite( $html, $allow_index ) {
 	);
 
 	$html = str_replace(
-		array( $test . 'halloween.html', $test . 'halloween', $test . 'index.html', $test ),
-		array( $home . 'halloween/', $home . 'halloween/', $home, $home ),
+		array( $test . 'halloween.html', $test . 'halloween', $test . 'nosotros.html', $test . 'nosotros', $test . 'index.html', $test ),
+		array( $home . 'halloween/', $home . 'halloween/', $home . 'nosotros/', $home . 'nosotros/', $home, $home ),
 		$html
 	);
 	$html = preg_replace( '#href="halloween(-m)?\.html#', 'href="' . $home . 'halloween/', $html );
+	$html = preg_replace( '#href="nosotros\.html#', 'href="' . $home . 'nosotros/', $html );
 	$html = preg_replace( '#href="index\.html#', 'href="' . $home, $html );
 
 	$html = preg_replace( '#<html\b#', '<html data-base="' . esc_attr( $base ) . '"', $html, 1 );
