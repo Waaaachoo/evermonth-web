@@ -147,6 +147,14 @@ function evw_rewrite( $html, $allow_index ) {
 
 	$html = preg_replace( '#' . preg_quote( $test, '#' ) . $dirs . '#', $base . '$1/', $html );
 	$html = preg_replace( '#\b(src|href|poster)="' . $dirs . '#', '$1="' . $base . '$2/', $html );
+	// srcset / imagesrcset hold a list of URLs: fix each one.
+	$html = preg_replace_callback(
+		'#\b((?:image)?srcset)="([^"]*)"#',
+		function ( $m ) use ( $base, $dirs ) {
+			return $m[1] . '="' . preg_replace( '#(^|,\s*)' . $dirs . '#', '$1' . $base . '$2/', $m[2] ) . '"';
+		},
+		$html
+	);
 
 	$html = str_replace(
 		array( $test . 'halloween.html', $test . 'halloween', $test . 'index.html', $test ),
