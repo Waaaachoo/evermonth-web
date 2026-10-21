@@ -8,6 +8,8 @@ We do not change DNS or email. If something breaks, switch the plugin off and th
 - It answers `/` (home) and `/halloween/` with the new pages.
 - It sends old links to the new pages with a 301: `/index.html`, `/halloween.html`, `/halloween-m.html`.
   When the site is live, it also sends `/halloween-evermonth/` (the client's old page) to `/halloween/`. It keeps `utm_*` and `fbclid`.
+- Short campaign links (`evw_short_links()` in `inc/router.php`) send a 302 to a page with UTMs.
+  `/payphone` → `/halloween/?utm_source=payphone&utm_medium=push&utm_campaign=hw26&utm_content=push1`.
 - Everything else stays with WordPress: `/wp-admin`, other pages, search, email.
 - Images, CSS, JS and video load from the plugin folder (`wp-content/plugins/evermonth-web/site/`).
 - The test-link URLs (canonical, og:, JSON-LD) change to the real domain automatically.

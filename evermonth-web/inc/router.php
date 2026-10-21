@@ -33,6 +33,16 @@ function evw_aliases( $live ) {
 	return $a;
 }
 
+/**
+ * Short campaign links => page + UTM query. Rules: Claude outputs/UTM-naming.md.
+ * They answer with a 302, so a target can change later without old browser caches.
+ */
+function evw_short_links() {
+	return array(
+		'payphone' => 'halloween/?utm_source=payphone&utm_medium=push&utm_campaign=hw26&utm_content=push1',
+	);
+}
+
 const EVW_COOKIE = 'evw_preview';
 
 /**
@@ -72,6 +82,16 @@ function evw_route( $wp ) {
 	$aliases = evw_aliases( $live );
 	if ( isset( $aliases[ $path ] ) ) {
 		evw_redirect( '' === $aliases[ $path ] ? '' : $aliases[ $path ] . '/' );
+	}
+	$short = evw_short_links();
+	if ( isset( $short[ $path ] ) ) {
+		// Keep anything the visitor brought (fbclid, ?c=) after our UTMs.
+		$to = home_url( '/' . $short[ $path ] );
+		if ( ! empty( $_SERVER['QUERY_STRING'] ) ) {
+			$to .= '&' . wp_unslash( $_SERVER['QUERY_STRING'] );
+		}
+		wp_safe_redirect( $to, 302, 'Evermonth Web' );
+		exit;
 	}
 
 	$pages = evw_pages();
