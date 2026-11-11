@@ -11,9 +11,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 /** Path (no slashes) => file in site/. '' is the home page. */
 function evw_pages() {
 	return array(
-		''          => 'index.html',
-		'halloween' => 'halloween.html',
-		'nosotros'  => 'nosotros.html',
+		''           => 'index.html',
+		'halloween'  => 'halloween.html',
+		'nosotros'   => 'nosotros.html',
+		'privacidad' => 'privacidad.html',
 	);
 }
 
@@ -25,6 +26,7 @@ function evw_aliases( $live ) {
 		'halloween-m.html' => 'halloween',
 		'halloween-m'      => 'halloween',
 		'nosotros.html'    => 'nosotros',
+		'privacidad.html'  => 'privacidad',
 	);
 	// The client's old Halloween page. Only when the new site is live, so the preview never hides it.
 	if ( $live ) {
@@ -162,7 +164,7 @@ function evw_serve( $file, $live, $head_only ) {
 /**
  * Fix the links of the static page for this WordPress:
  * - assets (img/, css/, js/, video/, fuentes/) point to the plugin folder,
- * - page links point to the pretty URLs (/, /halloween/ and /nosotros/),
+ * - page links point to the pretty URLs (/, /halloween/, /nosotros/ and /privacidad/),
  * - the test-link URLs (canonical, og:, JSON-LD) point to this site,
  * - data-base on <html> tells the JS where the images are.
  */
@@ -184,12 +186,13 @@ function evw_rewrite( $html, $allow_index ) {
 	);
 
 	$html = str_replace(
-		array( $test . 'halloween.html', $test . 'halloween', $test . 'nosotros.html', $test . 'nosotros', $test . 'index.html', $test ),
-		array( $home . 'halloween/', $home . 'halloween/', $home . 'nosotros/', $home . 'nosotros/', $home, $home ),
+		array( $test . 'halloween.html', $test . 'halloween', $test . 'nosotros.html', $test . 'nosotros', $test . 'privacidad.html', $test . 'privacidad', $test . 'index.html', $test ),
+		array( $home . 'halloween/', $home . 'halloween/', $home . 'nosotros/', $home . 'nosotros/', $home . 'privacidad/', $home . 'privacidad/', $home, $home ),
 		$html
 	);
 	$html = preg_replace( '#href="halloween(-m)?\.html#', 'href="' . $home . 'halloween/', $html );
 	$html = preg_replace( '#href="nosotros\.html#', 'href="' . $home . 'nosotros/', $html );
+	$html = preg_replace( '#href="privacidad\.html#', 'href="' . $home . 'privacidad/', $html );
 	$html = preg_replace( '#href="index\.html#', 'href="' . $home, $html );
 
 	$html = preg_replace( '#<html\b#', '<html data-base="' . esc_attr( $base ) . '"', $html, 1 );
