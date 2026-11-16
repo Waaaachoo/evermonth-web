@@ -13,6 +13,7 @@ function evw_pages() {
 	return array(
 		''           => 'index.html',
 		'halloween'  => 'halloween.html',
+		'holidays'   => 'holidays.html',
 		'nosotros'   => 'nosotros.html',
 		'privacidad' => 'privacidad.html',
 	);
@@ -25,6 +26,8 @@ function evw_aliases( $live ) {
 		'halloween.html'   => 'halloween',
 		'halloween-m.html' => 'halloween',
 		'halloween-m'      => 'halloween',
+		'holidays.html'    => 'holidays',
+		'navidad'          => 'holidays',
 		'nosotros.html'    => 'nosotros',
 		'privacidad.html'  => 'privacidad',
 	);
@@ -164,7 +167,7 @@ function evw_serve( $file, $live, $head_only ) {
 /**
  * Fix the links of the static page for this WordPress:
  * - assets (img/, css/, js/, video/, fuentes/) point to the plugin folder,
- * - page links point to the pretty URLs (/, /halloween/, /nosotros/ and /privacidad/),
+ * - page links point to the pretty URLs (/, /halloween/, /holidays/, /nosotros/ and /privacidad/),
  * - the test-link URLs (canonical, og:, JSON-LD) point to this site,
  * - data-base on <html> tells the JS where the images are.
  */
@@ -186,11 +189,12 @@ function evw_rewrite( $html, $allow_index ) {
 	);
 
 	$html = str_replace(
-		array( $test . 'halloween.html', $test . 'halloween', $test . 'nosotros.html', $test . 'nosotros', $test . 'privacidad.html', $test . 'privacidad', $test . 'index.html', $test ),
-		array( $home . 'halloween/', $home . 'halloween/', $home . 'nosotros/', $home . 'nosotros/', $home . 'privacidad/', $home . 'privacidad/', $home, $home ),
+		array( $test . 'halloween.html', $test . 'halloween', $test . 'holidays.html', $test . 'holidays', $test . 'nosotros.html', $test . 'nosotros', $test . 'privacidad.html', $test . 'privacidad', $test . 'index.html', $test ),
+		array( $home . 'halloween/', $home . 'halloween/', $home . 'holidays/', $home . 'holidays/', $home . 'nosotros/', $home . 'nosotros/', $home . 'privacidad/', $home . 'privacidad/', $home, $home ),
 		$html
 	);
 	$html = preg_replace( '#href="halloween(-m)?\.html#', 'href="' . $home . 'halloween/', $html );
+	$html = preg_replace( '#href="holidays\.html#', 'href="' . $home . 'holidays/', $html );
 	$html = preg_replace( '#href="nosotros\.html#', 'href="' . $home . 'nosotros/', $html );
 	$html = preg_replace( '#href="privacidad\.html#', 'href="' . $home . 'privacidad/', $html );
 	$html = preg_replace( '#href="index\.html#', 'href="' . $home, $html );
