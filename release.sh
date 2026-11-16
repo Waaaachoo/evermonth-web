@@ -34,6 +34,9 @@ cp -r "$PLUGIN/." "$BUILD/"
 rm -rf "$BUILD/site"
 cp -r "$WEB" "$BUILD/site"
 rm -rf "$BUILD/site/ref"
+# Drafts that are not live yet: every file under the plugin folder is public, so keep them out.
+# Holidays 2026 (proposals A/B, facts still [CONFIRMAR]). Remove these lines when Holidays launches.
+rm -f "$BUILD/site/holidays-a.html" "$BUILD/site/holidays-b.html" "$BUILD/site/css/holidays"*.css "$BUILD/site/js/holidays.js" "$BUILD/site/img/nv_"*
 
 # 3. Zip with forward slashes and one top folder "evermonth-web/" (WordPress needs both).
 python -I - "$HERE/dist/build" "$ZIP" <<'PY'
